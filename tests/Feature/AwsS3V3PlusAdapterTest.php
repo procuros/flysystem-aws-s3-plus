@@ -22,8 +22,8 @@ beforeEach(function () {
         'throw' => true,
         'version' => 'latest',
         'credentials' => [
-            'key' => $_ENV['AWS_ACCESS_KEY_ID'] = 'sail',
-            'secret' => $_ENV['AWS_SECRET_ACCESS_KEY'] = 'password',
+            'key' => $_ENV['AWS_ACCESS_KEY_ID'] = 'minio',
+            'secret' => $_ENV['AWS_SECRET_ACCESS_KEY'] = 'soverysecure',
         ],
         'root' => $_ENV['AWS_ROOT'] = 'test',
     ];
@@ -307,7 +307,7 @@ function putObject(S3Client $client, array $config, string $path, string $conten
     ]);
 }
 
-function deleteObject(S3Client $client, array $config, string $path, string $versionId = null): Result
+function deleteObject(S3Client $client, array $config, string $path, ?string $versionId = null): Result
 {
     $version = $versionId ? ['VersionId' => $versionId] : [];
 
