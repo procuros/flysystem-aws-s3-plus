@@ -14,10 +14,10 @@
     ],
     "type": "library",
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "league/flysystem-aws-s3-v3": "^3.19.0",
-        "illuminate/conditionable": "^11.0",
-        "illuminate/filesystem": "^11.0",
+        "illuminate/conditionable": "^12.0",
+        "illuminate/filesystem": "^12.0",
         "illuminate/support": "*"
     },
     "license": "MIT",
@@ -34,9 +34,9 @@
         }
     ],
     "require-dev": {
-        "pestphp/pest": "^2.24",
-        "orchestra/testbench": "^9.16",
-        "pestphp/pest-plugin-type-coverage": "^2.4",
+        "pestphp/pest": "^3.8",
+        "orchestra/testbench": "^10.11",
+        "pestphp/pest-plugin-type-coverage": "^3.6",
         "laravel/pint": "^1.13",
         "defstudio/pest-plugin-laravel-expectations": "^2.1"
     },
