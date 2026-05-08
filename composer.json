@@ -16,7 +16,6 @@
     "require": {
         "php": "^8.4",
         "league/flysystem-aws-s3-v3": "^3.19.0",
-        "illuminate/conditionable": "^12.0",
         "illuminate/filesystem": "^12.0",
         "illuminate/support": "*"
     },
