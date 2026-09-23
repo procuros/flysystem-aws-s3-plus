@@ -10,34 +10,36 @@ jobs:
     strategy:
       max-parallel: 2
       matrix:
-        php-versions: ['8.1', '8.2', '8.3']
+        php-versions: ['8.4', '8.5']
 
     name: PHP ${{ matrix.php-versions }}
 
+    services:
+      floci:
+        image: floci/floci:2.0.1
+        options: >-
+          --health-cmd "curl -sf http://localhost:4566/_floci/health"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+          --health-start-period 5s
+        ports:
+          - 4566:4566
+
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
 
     - name: Setup PHP
-      uses: shivammathur/setup-php@master
+      uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-versions }}
         coverage: xdebug
-
-    - name: Setup minio
-      run: |
-        docker run -d -p 9000:9000 --name minio -e "MINIO_ACCESS_KEY=sail" -e "MINIO_SECRET_KEY=password" -v /tmp/data:/data -v /tmp/config:/root/.minio minio/minio server /data
-                  
-        export AWS_ACCESS_KEY_ID=sail
-        export AWS_SECRET_ACCESS_KEY=password
-        export AWS_EC2_METADATA_DISABLED=true
-        
-        aws --endpoint-url http://127.0.0.1:9000/ s3 mb s3://testbucket
 
     - name: Validate composer.json and composer.lock
       run: composer validate
 
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --no-suggest
+      run: composer install --prefer-dist --no-progress
 
     - name: PHP Pint
       run: ./vendor/bin/pint --test

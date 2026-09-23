@@ -1,0 +1,11 @@
+services:
+  floci:
+    image: floci/floci:2.0.1
+    ports:
+      - '${FLOCI_PORT:-4566}:4566'
+    healthcheck:
+      test: ['CMD', 'curl', '-sf', 'http://localhost:4566/_floci/health']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
