@@ -17,7 +17,7 @@ final class UnableToRestoreFile extends RuntimeException implements FilesystemOp
         return $this->path;
     }
 
-    public static function fromLocation(string $path, Throwable $previous = null): UnableToRestoreFile
+    public static function fromLocation(string $path, ?Throwable $previous = null): UnableToRestoreFile
     {
         $e = new self("Unable to restore file {$path}", 0, $previous);
         $e->path = $path;
