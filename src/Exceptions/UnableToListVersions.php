@@ -14,7 +14,7 @@ final class UnableToListVersions extends RuntimeException implements FilesystemO
 
     private string $reason;
 
-    public static function create(string $location, string $reason = '', Throwable $previous = null): self
+    public static function create(string $location, string $reason = '', ?Throwable $previous = null): self
     {
         $e = new self("Unable to retrieve the versions for file at location: $location. {$reason}", 0, $previous);
         $e->reason = $reason;

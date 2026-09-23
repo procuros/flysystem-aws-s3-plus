@@ -32,7 +32,7 @@ class AwsS3PlusFilesystemServiceProvider extends ServiceProvider
     /**
      * Create an instance of the Amazon S3 extended driver.
      *
-     *  @throws InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function createS3ExtendedDriver(array $config): AwsS3V3PlusAdapter
     {

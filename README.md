@@ -128,6 +128,24 @@ Contributions are welcome and will be fully credited.
 
 Contributions are accepted via Pull Requests on [Github][4].
 
+## Testing
+
+The feature tests run against [Floci](https://github.com/floci-io/floci), a local AWS emulator. Start a throwaway instance with Docker Compose, run the suite, then tear it down:
+
+```bash
+docker compose up -d --wait
+./vendor/bin/pest
+docker compose down
+```
+
+If port `4566` is already in use (e.g. by another project's Floci), pick another port and pass it to both commands:
+
+```bash
+FLOCI_PORT=4567 docker compose up -d --wait
+FLOCI_PORT=4567 ./vendor/bin/pest
+FLOCI_PORT=4567 docker compose down
+```
+
 ## Pull Requests
 
 - **Document any change in behaviour** - Make sure the `readme.md` and any other relevant documentation are kept up-to-date.

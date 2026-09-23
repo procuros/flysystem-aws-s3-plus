@@ -13,16 +13,18 @@ use League\Flysystem\Visibility;
 use Szhorvath\FlysystemAwsS3Plus\AwsS3V3PlusAdapter;
 
 beforeEach(function () {
+    $endpoint = 'http://127.0.0.1:'.(getenv('FLOCI_PORT') ?: '4566');
+
     $this->config = [
         'bucket' => $_ENV['AWS_BUCKET'] = 'testbucket',
         'region' => $_ENV['AWS_DEFAULT_REGION'] = 'eu-west-1',
-        'url' => $_ENV['AWS_URL'] = 'http://127.0.0.1:9000',
-        'endpoint' => 'http://127.0.0.1:9000',
+        'url' => $_ENV['AWS_URL'] = $endpoint,
+        'endpoint' => $endpoint,
         'use_path_style_endpoint' => true,
         'throw' => true,
         'version' => 'latest',
         'credentials' => [
-            'key' => $_ENV['AWS_ACCESS_KEY_ID'] = 'minio',
+            'key' => $_ENV['AWS_ACCESS_KEY_ID'] = 'floci',
             'secret' => $_ENV['AWS_SECRET_ACCESS_KEY'] = 'soverysecure',
         ],
         'root' => $_ENV['AWS_ROOT'] = 'test',
@@ -70,13 +72,14 @@ afterEach(function () {
         }
     }
 
-    if (count($objects) > 0) {
-        $this->client->deleteObjects([
+    // Floci ignores VersionId on the batch DeleteObjects call (it adds delete markers
+    // instead) and on a "null" version, so objects are removed one by one.
+    foreach ($objects as $object) {
+        $this->client->deleteObject(array_filter([
             'Bucket' => $this->config['bucket'],
-            'Delete' => [
-                'Objects' => $objects,
-            ],
-        ]);
+            'Key' => $object['Key'],
+            'VersionId' => $object['VersionId'] === 'null' ? null : $object['VersionId'],
+        ]));
     }
 
     $this->client->deleteBucket(['Bucket' => $this->config['bucket']]);
@@ -144,8 +147,12 @@ it('should retrieve a list of versions and delete markers in the same list', fun
 
     $path = $this->config['root'].'/text.txt';
 
+    // Floci reports LastModified with second precision, so space the writes out
+    // to keep the sort by updatedAt deterministic.
     $versionId1 = putObject($this->client, $this->config, 'text.txt', 'DataVersion1')->get('VersionId');
+    sleep(1);
     $deleteMarkerId = deleteObject($this->client, $this->config, 'text.txt')->get('VersionId');
+    sleep(1);
     $versionIdTwo = putObject($this->client, $this->config, 'text.txt', 'DataVersionTwo')->get('VersionId');
 
     $list = $this->adapter->versions($path);
@@ -161,8 +168,9 @@ it('should retrieve a list of versions and delete markers in the same list', fun
         ->updatedAt->toBeInstanceOf(CarbonImmutable::class)
         ->size->toBe(14);
 
+    // S3 returns no ETag for delete markers, while Floci does.
     expect($list[1])
-        ->hash->toBe('')
+        ->hash->toBeString()
         ->key->toBe($path)
         ->id->toBe($deleteMarkerId)
         ->type->toBe('deleteMarker')
@@ -293,7 +301,7 @@ function createTestBucket(S3Client $client, array $config): void
 
     try {
         $client->headBucket($params);
-    } catch (\Throwable $th) {
+    } catch (Throwable $th) {
         $client->createBucket($params);
     }
 }

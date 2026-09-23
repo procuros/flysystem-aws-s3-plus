@@ -43,7 +43,7 @@ it('should retrieve a list of versions of an S3 object', function () {
                 'IsLatest' => true,
                 'LastModified' => DateTimeResult::fromISO8601('2024-08-13T14:39:22.000Z'),
                 'Owner' => [
-                    'DisplayName' => 'minio',
+                    'DisplayName' => 'floci',
                     'ID' => '02d6176db174dc93cb1b899f7c6078f08654445fe8cf1b6ce98d8855f66bdbf4',
                 ],
             ],
@@ -56,7 +56,7 @@ it('should retrieve a list of versions of an S3 object', function () {
                 'IsLatest' => false,
                 'LastModified' => DateTimeResult::fromISO8601('2023-08-13T14:39:22.000Z'),
                 'Owner' => [
-                    'DisplayName' => 'minio',
+                    'DisplayName' => 'floci',
                     'ID' => '02d6176db174dc93cb1b899f7c6078f08654445fe8cf1b6ce98d8855f66bdbf4',
                 ],
             ],
@@ -107,7 +107,7 @@ it('should retrieve a list of versions and delete markers in the same list', fun
                 'IsLatest' => true,
                 'LastModified' => DateTimeResult::fromISO8601('2024-01-12T10:00:00.000Z'),
                 'Owner' => [
-                    'DisplayName' => 'minio',
+                    'DisplayName' => 'floci',
                     'ID' => '02d6176db174dc93cb1b899f7c6078f08654445fe8cf1b6ce98d8855f66bdbf4',
                 ],
             ],
@@ -120,7 +120,7 @@ it('should retrieve a list of versions and delete markers in the same list', fun
                 'IsLatest' => false,
                 'LastModified' => DateTimeResult::fromISO8601('2024-01-10T10:00:00.000Z'),
                 'Owner' => [
-                    'DisplayName' => 'minio',
+                    'DisplayName' => 'floci',
                     'ID' => '02d6176db174dc93cb1b899f7c6078f08654445fe8cf1b6ce98d8855f66bdbf4',
                 ],
             ],
@@ -128,7 +128,7 @@ it('should retrieve a list of versions and delete markers in the same list', fun
         'DeleteMarkers' => [
             [
                 'Owner' => [
-                    'DisplayName' => 'minio',
+                    'DisplayName' => 'floci',
                     'ID' => '02d6176db174dc93cb1b899f7c6078f08654445fe8cf1b6ce98d8855f66bdbf4',
                 ],
                 'Key' => 'test/text.txt',
@@ -179,7 +179,7 @@ it('should retrieve a list of versions and delete markers in the same list', fun
 });
 
 it('should get a temporary url of a specific version of an object', function () {
-    $adapter = mockAdapter(new Result());
+    $adapter = mockAdapter(new Result);
 
     $expiresAt = Carbon::now()->addMinutes(1);
 
@@ -272,7 +272,7 @@ it('should permanently delete a specific version of an object', function ($param
 
 it('should restores the object by copying the version to the top of the stack', function () {
     $adapter = mockAdapter([
-        new Result(),
+        new Result,
         new Result([
             'CopyObjectResult' => [
                 'ETag' => '"8d777f385d3dfec8815d20f7496026dc"',
@@ -301,8 +301,8 @@ function mockAdapter(array|Closure|Result $result)
     $config = [
         'bucket' => $_ENV['AWS_BUCKET'] = 'testbucket',
         'region' => $_ENV['AWS_DEFAULT_REGION'] = 'eu-west-1',
-        'url' => $_ENV['AWS_URL'] = 'http://minio:9000',
-        'endpoint' => 'http://minio:9000',
+        'url' => $_ENV['AWS_URL'] = 'http://floci:4566',
+        'endpoint' => 'http://floci:4566',
         'use_path_style_endpoint' => true,
         'throw' => true,
         'version' => 'latest',
@@ -313,7 +313,7 @@ function mockAdapter(array|Closure|Result $result)
         'root' => $_ENV['AWS_ROOT'] = 'test',
     ];
 
-    $mock = new MockHandler();
+    $mock = new MockHandler;
 
     if (is_array($result)) {
         foreach ($result as $value) {
